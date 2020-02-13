@@ -10,10 +10,13 @@ import java.util.TreeMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.PieSectionLabelGenerator;
-import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -28,6 +31,7 @@ import one.kroos.config.BotConfig;
 import one.kroos.database.ImgbbSpider;
 import one.kroos.database.RecruitmentData;
 import one.kroos.database.SqlSpider;
+import one.kroos.utils.ColorUtil;
 import one.kroos.utils.LogUtil;
 
 public class DisplayDataCommand extends CommandHandler {
@@ -59,20 +63,32 @@ public class DisplayDataCommand extends CommandHandler {
 	}
 
 	private static BufferedImage generatePieChart(TreeMap<String, Integer> data) {
-		DefaultPieDataset dataset = new DefaultPieDataset();
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		double total = 0, max = 0;
+		for (int i : data.values())
+			total += i;
+
 		for (Entry<String, Integer> entry : data.entrySet()) {
 			if (entry.getValue() <= 0)
 				continue;
-			dataset.setValue(RecruitmentData.getDisplayName(entry.getKey()), entry.getValue());
+			double v = entry.getValue() / total;
+			if (v > max)
+				max = v;
+			dataset.addValue(v, "Chance", RecruitmentData.getDisplayName(entry.getKey()));
 		}
-		JFreeChart chart = ChartFactory.createPieChart(null, dataset, false, false, false);
-		PiePlot plot = (PiePlot) chart.getPlot();
-//		plot.setLabelGenerator(null);
-		plot.setLabelBackgroundPaint(null);
-		plot.setLabelFont(new Font("Consolas", 0, 20));
-		PieSectionLabelGenerator gen = new StandardPieSectionLabelGenerator("{0}\n{1} ({2})", new DecimalFormat("0"),
-				new DecimalFormat("0%"));
-		plot.setLabelGenerator(gen);
+		JFreeChart chart = ChartFactory.createBarChart(null, null, null, dataset, PlotOrientation.HORIZONTAL, false,
+				true, false);
+		CategoryPlot plot = (CategoryPlot) chart.getPlot();
+		CategoryItemRenderer r = plot.getRenderer();
+		r.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator("{2}", new DecimalFormat(" 0%")));
+		r.setSeriesPaint(0, ColorUtil.fromHex("4285f4"));
+		r.setSeriesItemLabelsVisible(1, true);
+		r.setSeriesItemLabelFont(0, new Font("Consolas", 0, 20));
+		r.setBaseItemLabelsVisible(true);
+		r.setBaseSeriesVisible(true);
+
+		NumberAxis range = (NumberAxis) plot.getRangeAxis();
+		range.setRange(0, max + 0.02);
 
 		return chart.createBufferedImage(800, 600);
 	}
