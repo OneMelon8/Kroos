@@ -30,6 +30,10 @@ public class RecruitmentData {
 		return sb.toString();
 	}
 
+	public static String getDisplayName(String tag) {
+		return TAGS_DISPLAY.get(TAGS.indexOf(tag.toLowerCase()));
+	}
+
 	public static String getNameFromIndex(int index) {
 		return TAGS.get(index);
 	}

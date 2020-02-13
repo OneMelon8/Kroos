@@ -29,5 +29,6 @@ public class BotConfig {
 	 * URLs
 	 */
 	public static final String URL_404 = "https://i.imgur.com/nYJtkaS.png";
+	public static final String URL_RHODES = "https://i.imgur.com/mXnN6vZ.png";
 
 }

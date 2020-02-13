@@ -10,6 +10,10 @@ public class EnviroHandler {
 		return System.getenv("ocr");
 	}
 
+	public static String getImgbbToken() {
+		return System.getenv("imgbb");
+	}
+
 	/**
 	 * Gets the SQL database's account information
 	 * 
