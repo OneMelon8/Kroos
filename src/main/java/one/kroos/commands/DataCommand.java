@@ -43,6 +43,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			return;
 		}
 
+		SqlSpider.connect();
 		for (int a = 0; a < attachments.size(); a++) {
 			// Only accepts recruit images
 			if (!attachments.get(a).isImage()) {
@@ -82,6 +83,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 
 			bot.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
 		}
+		SqlSpider.close();
 	}
 
 	/*
@@ -122,7 +124,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		try {
 			double sim = new ImageHistogram().match(RECRUIT_IMAGE_URL, url);
 			LogUtil.info("Recruitment data similarity: " + GeneralTools.getPercentage(sim));
-			return sim > 0.97;
+			return sim > 0.985;
 		} catch (IOException e) {
 			LogUtil.error("IOException caught when comparing recruiting images...");
 			e.printStackTrace();
