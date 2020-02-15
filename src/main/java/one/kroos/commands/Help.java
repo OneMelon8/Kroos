@@ -8,27 +8,52 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.User;
 import one.kroos.Bot;
+import one.kroos.commands.helpers.CommandDispatcher;
 import one.kroos.commands.helpers.CommandHandler;
 import one.kroos.config.BotConfig;
 
 public class Help extends CommandHandler {
 
 	public Help(Bot bot) {
-		super(bot, "help", "Show the help information for Kroos");
+		super(bot, "help", new String[] { "?" }, "Show the help information for Kroos", null,
+				PREFIX + "help [specfic command]", null);
 	}
 
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
-		bot.sendMessage(this.getHelpEmbeded(), channel);
+		bot.sendThinkingPacket(channel);
+		// Send general help commands
+		if (args.length != 1) {
+			bot.sendMessage(getAllHelpEmbeded(), channel);
+			return;
+		}
+
+		// Send help for specific commands
+		String sub = args[0];
+		CommandHandler commandHandler = CommandDispatcher.registeredListeners.get(sub);
+		if (commandHandler == null)
+			for (String key : CommandDispatcher.registeredCommands.keySet()) {
+				String[] lstAliases = CommandDispatcher.registeredCommands.get(key);
+				for (String aliase : lstAliases)
+					if (sub.equalsIgnoreCase(aliase))
+						sub = key;
+			}
+		commandHandler = CommandDispatcher.registeredListeners.get(sub);
+		if (commandHandler == null) {
+			bot.sendMessage(author.getAsMention()
+					+ " Hmm, I'm not sure what that means. Check out a list of available commands with **"
+					+ BotConfig.PREFIX + "help**", channel);
+			return;
+		}
+		bot.sendMessage(commandHandler.getHelpEmbeded(), channel);
 	}
 
-	@Override
-	public MessageEmbed getHelpEmbeded() {
+	public MessageEmbed getAllHelpEmbeded() {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setColor(BotConfig.COLOR_MISC);
 		builder.setAuthor("Doctor? Do you need help? *Yawn*");
-		builder.setDescription(this.helpMsg);
+		builder.setDescription(this.description);
 
 		StringBuilder sb = new StringBuilder("```");
 		sb.append(String.format("%-8s >> %s", "data", "Gather data from attached screenshot\n"

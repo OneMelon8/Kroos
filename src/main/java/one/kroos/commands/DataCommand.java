@@ -4,19 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.MessageReaction.ReactionEmote;
 import net.dv8tion.jda.api.entities.User;
 import one.kroos.Bot;
 import one.kroos.commands.helpers.CommandHandler;
 import one.kroos.commands.helpers.ReactionHandler;
-import one.kroos.config.BotConfig;
 import one.kroos.database.Emojis;
 import one.kroos.database.ImgbbSpider;
 import one.kroos.database.RecruitmentData;
@@ -31,7 +27,8 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 	private static final String RECRUIT_IMAGE_URL = "https://i.imgur.com/mzVdsiP.jpg";
 
 	public DataCommand(Bot bot) {
-		super(bot, "data", "Gather data for the recruitment function");
+		super(bot, "data", "Gather data for the recruitment function", null,
+				PREFIX + "data\nOR simply upload a relevant screenshot", null);
 	}
 
 	@Override
@@ -132,17 +129,6 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	@Override
-	public MessageEmbed getHelpEmbeded() {
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setColor(BotConfig.COLOR_MISC);
-		builder.setAuthor("Arknights Recruitment Data");
-		builder.setDescription(this.helpMsg);
-		builder.addField(new Field("Copy & Paste:", "```" + BotConfig.PREFIX + command + "```\n"
-				+ "Be sure to attach a screenshot of the recruitment interface", false));
-		return builder.build();
 	}
 
 }

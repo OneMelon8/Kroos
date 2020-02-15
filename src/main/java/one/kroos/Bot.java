@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import one.kroos.commands.DataCommand;
-import one.kroos.commands.DisplayDataCommand;
+import one.kroos.commands.DataDisplayCommand;
 import one.kroos.commands.Help;
 import one.kroos.commands.Ping;
 import one.kroos.commands.helpers.ReactionDispatcher;
@@ -69,7 +69,7 @@ public class Bot {
 		new Help(this);
 
 		new DataCommand(this);
-		new DisplayDataCommand(this);
+		new DataDisplayCommand(this);
 	}
 
 	/*
