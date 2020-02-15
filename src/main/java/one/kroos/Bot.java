@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import one.kroos.commands.DataCommand;
 import one.kroos.commands.DisplayDataCommand;
+import one.kroos.commands.Help;
 import one.kroos.commands.Ping;
 import one.kroos.commands.helpers.ReactionDispatcher;
 import one.kroos.database.Emojis;
@@ -65,6 +66,8 @@ public class Bot {
 
 	private void registerHandlers() {
 		new Ping(this);
+		new Help(this);
+
 		new DataCommand(this);
 		new DisplayDataCommand(this);
 	}
