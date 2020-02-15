@@ -70,8 +70,7 @@ public class CommandDispatcher {
 	 * Special case: gather data with only a screenshot
 	 */
 	public static void fireDataCommand(MessageReceivedEvent e) {
-		String msg = e.getMessage().getContentRaw();
-		LogUtil.info(e.getAuthor().getAsTag() + " executed " + msg);
+		LogUtil.info(e.getAuthor().getAsTag() + " triggered data-gathering event");
 		registeredListeners.get("data").onCommand(e.getAuthor(), null, null, e.getMessage(), e.getChannel(),
 				e.getGuild());
 	}
