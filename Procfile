@@ -1,0 +1,1 @@
+worker: java -jar target/Kroos-1.0.jar
