@@ -80,6 +80,9 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			}
 			sb.delete(sb.length() - 2, sb.length());
 
+			// Upload data for bulk tags
+			SqlSpider.execute("INSERT INTO RecruitData(`data`) VALUES (\"" + sb.toString().replace("*", "") + "\")");
+			LogUtil.info("Updated bulk recruit tags in the database!");
 			bot.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
 		}
 		SqlSpider.close();

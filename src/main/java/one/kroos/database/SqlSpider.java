@@ -58,6 +58,18 @@ public class SqlSpider {
 		LogUtil.info("SQL connection successfully closed!");
 	}
 
+	public static void execute(String command) {
+		connectIfNotConnected();
+		try {
+			LogUtil.info("Running generic command \"" + command + "\"...");
+			Statement s = connection.createStatement();
+			s.execute(command);
+		} catch (SQLException ex) {
+			LogUtil.error("SQLException caught when executing command in database:");
+			ex.printStackTrace();
+		}
+	}
+
 	public static ResultSet query(String command) {
 		connectIfNotConnected();
 		try {
