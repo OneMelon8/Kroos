@@ -1,5 +1,6 @@
 package one.kroos.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +20,17 @@ import one.kroos.commands.helpers.ReactionDispatcher;
 import one.kroos.commands.helpers.ReactionHandler;
 import one.kroos.config.BotConfig;
 import one.kroos.database.Emojis;
+import one.kroos.database.ImgbbSpider;
 import one.kroos.database.RecruitmentData;
 import one.kroos.database.SqlSpider;
+import one.kroos.utils.GeneralTools;
+import one.kroos.utils.ImageHistogram;
 import one.kroos.utils.LogUtil;
 import one.kroos.utils.OcrUtil;
 
 public class DataCommand extends CommandHandler implements ReactionHandler {
+
+	private static final String RECRUIT_IMAGE_URL = "https://i.imgur.com/mzVdsiP.jpg";
 
 	public DataCommand(Bot bot) {
 		super(bot, "data", "Gather data for the recruitment function");
@@ -56,6 +62,22 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		ReactionDispatcher.register(message, this, Emojis.CHECK, Emojis.CROSS);
 	}
 
+	public static boolean isDataIntent(Message message) {
+		List<Attachment> attachments = message.getAttachments();
+		if (attachments.isEmpty() || !attachments.get(0).isImage())
+			return false;
+		String url = ImgbbSpider.uploadImage(attachments.get(0).getProxyUrl());
+		try {
+			double sim = new ImageHistogram().match(RECRUIT_IMAGE_URL, url);
+			LogUtil.info("Recruitment data similarity: " + GeneralTools.getPercentage(sim));
+			return sim > 0.97;
+		} catch (IOException e) {
+			LogUtil.error("IOException caught when comparing recruiting images...");
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	@Override
 	public void onReact(User user, ReactionEmote emote, Message message, MessageChannel channel, Guild guild) {
 		bot.removeAllReactions(message);
@@ -76,7 +98,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 					+ RecruitmentData.TAGS_DISPLAY.indexOf(tag));
 			LogUtil.info("Updated " + tag + " in the database!");
 		}
-		bot.sendMessage("Database updateds, thank you for contributing!", channel);
+		bot.sendMessage("Database updated, thank you for contributing!", channel);
 	}
 
 	@Override

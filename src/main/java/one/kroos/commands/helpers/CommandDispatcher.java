@@ -67,6 +67,16 @@ public class CommandDispatcher {
 	}
 
 	/**
+	 * Special case: gather data with only a screenshot
+	 */
+	public static void fireDataCommand(MessageReceivedEvent e) {
+		String msg = e.getMessage().getContentRaw();
+		LogUtil.info(e.getAuthor().getAsTag() + " executed " + msg);
+		registeredListeners.get("data").onCommand(e.getAuthor(), null, null, e.getMessage(), e.getChannel(),
+				e.getGuild());
+	}
+
+	/**
 	 * Register a command for the bot <br>
 	 * Commands that are not registered will not be executed!
 	 * 

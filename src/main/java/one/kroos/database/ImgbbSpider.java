@@ -61,6 +61,31 @@ public class ImgbbSpider {
 		}
 	}
 
+	public static String uploadImage(String imageUrl) {
+		try {
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(getUrl());
+			List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+			params.add(new BasicNameValuePair("image", imageUrl));
+			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+			HttpEntity entity = httpclient.execute(httppost).getEntity();
+
+			if (entity == null)
+				return null;
+			InputStream instream = entity.getContent();
+			StringWriter writer = new StringWriter();
+			IOUtils.copy(instream, writer, "UTF-8");
+			String jsonString = writer.toString();
+			JsonObject json = (JsonObject) JsonParser.parseString(jsonString);
+			JsonObject data = json.get("data").getAsJsonObject();
+			String url = data.get("display_url").getAsString().replace("\\/", "/");
+			return url;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return BotConfig.URL_404;
+		}
+	}
+
 	private static String getUrl() {
 		return url + "?key=" + key;
 	}
