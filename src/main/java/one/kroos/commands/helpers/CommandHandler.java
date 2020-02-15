@@ -85,7 +85,7 @@ public abstract class CommandHandler {
 	public final MessageEmbed getHelpEmbeded() {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setColor(BotConfig.COLOR_MISC);
-		builder.setAuthor("Help for " + this.command + ":");
+		builder.setAuthor("Help for command \"" + this.command + "\":");
 		builder.setDescription("*" + this.description + "*");
 
 		// Long description
@@ -95,21 +95,20 @@ public abstract class CommandHandler {
 
 		// Aliases
 		if (this.aliases != null && this.aliases.length != 0) {
-			StringBuilder sb = new StringBuilder("```");
+			StringBuilder sb = new StringBuilder("> ");
 			for (String aliase : aliases)
 				sb.append(aliase + ", ");
 			sb.delete(sb.length() - 2, sb.length());
-			sb.append("```");
 			builder.addField(new Field("**Aliases:**", sb.toString(), false));
 		}
 
 		// Usages
 		if (this.usage != null)
-			builder.addField(new Field("**Usage:**", "```" + this.usage + "```", false));
+			builder.addField(new Field("**Usage:**", "> " + this.usage, false));
 
 		// Examples
 		if (this.example != null)
-			builder.addField(new Field("**Example:**", "```" + this.example + "```", false));
+			builder.addField(new Field("**Example:**", "```" + this.example, false));
 
 		return builder.build();
 	}
