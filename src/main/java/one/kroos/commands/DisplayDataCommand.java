@@ -44,6 +44,7 @@ public class DisplayDataCommand extends CommandHandler {
 			Guild guild) {
 		ResultSet rs = SqlSpider.query("SELECT * FROM ArknightsRecruit");
 		TreeMap<String, Integer> data = parseData(rs);
+		SqlSpider.close();
 		BufferedImage img = generatePieChart(data);
 		String url = ImgbbSpider.uploadImage(img);
 		bot.sendMessage(buildEmbed(url), channel);

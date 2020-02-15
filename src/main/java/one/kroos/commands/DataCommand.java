@@ -43,7 +43,6 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			return;
 		}
 
-		SqlSpider.connect();
 		for (int a = 0; a < attachments.size(); a++) {
 			// Only accepts recruit images
 			if (!attachments.get(a).isImage()) {
