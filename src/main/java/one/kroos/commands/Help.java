@@ -58,7 +58,7 @@ public class Help extends CommandHandler {
 		StringBuilder sb = new StringBuilder("```");
 		sb.append(String.format("%-4s >> %s", "data", "Gather data from attached screenshot\n"
 				+ "- NOTE: simply upload screenshot(s), no command required\n"));
-		sb.append(String.format("%-4s >> %s", "disp", "Display the current data as a graph\n"));
+		sb.append(String.format("%-4s >> %s", "stat", "Display the current statistics as a graph\n"));
 		sb.append("```");
 		builder.addField(new Field("**Recruitment Commands:**", sb.toString(), false));
 
