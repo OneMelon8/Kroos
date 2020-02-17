@@ -42,12 +42,13 @@ public class DataDisplayCommand extends CommandHandler {
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
+		bot.sendThinkingPacket(channel);
 		ResultSet rs = SqlSpider.query("SELECT * FROM ArknightsRecruit");
 		TreeMap<String, Integer> data = parseData(rs);
 		SqlSpider.close();
 		BufferedImage img = generatePieChart(data);
 		String url = ImgbbSpider.uploadImage(img);
-		bot.sendMessage(buildEmbed(url), channel);
+		bot.sendMessage(buildEmbed(getTotal(data), url), channel);
 	}
 
 	private static TreeMap<String, Integer> parseData(ResultSet rs) {
@@ -62,11 +63,16 @@ public class DataDisplayCommand extends CommandHandler {
 		return data;
 	}
 
-	private static BufferedImage generatePieChart(TreeMap<String, Integer> data) {
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		double total = 0, max = 0;
+	private static int getTotal(TreeMap<String, Integer> data) {
+		int total = 0;
 		for (int i : data.values())
 			total += i;
+		return total;
+	}
+
+	private static BufferedImage generatePieChart(TreeMap<String, Integer> data) {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		double total = getTotal(data), max = 0;
 
 		for (Entry<String, Integer> entry : data.entrySet()) {
 			if (entry.getValue() <= 0)
@@ -89,14 +95,16 @@ public class DataDisplayCommand extends CommandHandler {
 
 		NumberAxis range = (NumberAxis) plot.getRangeAxis();
 		range.setRange(0, max + 0.02);
+		range.setNumberFormatOverride(new DecimalFormat("#.#%"));
 
 		return chart.createBufferedImage(800, 600);
 	}
 
-	private static MessageEmbed buildEmbed(String url) {
+	private static MessageEmbed buildEmbed(int count, String url) {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setColor(BotConfig.COLOR_MISC);
 		builder.setAuthor("Arknights Recruitment Tags Statistics");
+		builder.setDescription("*Collected a total of **" + (count / 5) + "** data samples*");
 		builder.setImage(url);
 		return builder.build();
 	}
