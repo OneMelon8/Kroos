@@ -80,7 +80,7 @@ public class DataDisplayCommand extends CommandHandler {
 				true, false);
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		CategoryItemRenderer r = plot.getRenderer();
-		r.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator("{2}", new DecimalFormat(" 0%")));
+		r.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator("{2}", new DecimalFormat(" #.##%")));
 		r.setSeriesPaint(0, ColorUtil.fromHex("4285f4"));
 		r.setSeriesItemLabelsVisible(1, true);
 		r.setSeriesItemLabelFont(0, new Font("Consolas", 0, 20));

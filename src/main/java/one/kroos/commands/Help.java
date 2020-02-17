@@ -56,15 +56,15 @@ public class Help extends CommandHandler {
 		builder.setDescription(this.description);
 
 		StringBuilder sb = new StringBuilder("```");
-		sb.append(String.format("%-8s >> %s", "data", "Gather data from attached screenshot\n"
-				+ "- NOTE: simply uploading a screenshot, no command required\n"));
-		sb.append(String.format("%-8s >> %s", "disp", "Display the current data as a graph\n"));
+		sb.append(String.format("%-4s >> %s", "data", "Gather data from attached screenshot\n"
+				+ "- NOTE: simply upload screenshot(s), no command required\n"));
+		sb.append(String.format("%-4s >> %s", "disp", "Display the current data as a graph\n"));
 		sb.append("```");
 		builder.addField(new Field("**Recruitment Commands:**", sb.toString(), false));
 
 		sb = new StringBuilder("```");
-		sb.append(String.format("%-8s >> %s", "ping", "Check my heartbeat\n"));
-		sb.append(String.format("%-8s >> %s", "help", "Show this image\n"));
+		sb.append(String.format("%-4s >> %s", "ping", "Check my heartbeat\n"));
+		sb.append(String.format("%-4s >> %s", "help", "Show this image\n"));
 		sb.append("```");
 		builder.addField(new Field("**Other Commands:**", sb.toString(), false));
 		return builder.build();
