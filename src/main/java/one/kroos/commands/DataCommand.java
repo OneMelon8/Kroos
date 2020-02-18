@@ -123,7 +123,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		try {
 			double sim = new ImageHistogram().match(RECRUIT_IMAGE_URL, url);
 			LogUtil.info("Recruitment data similarity: " + GeneralTools.getPercentage(sim));
-			return sim > 0.985;
+			return sim > 0.98;
 		} catch (IOException e) {
 			LogUtil.error("IOException caught when comparing recruiting images...");
 			e.printStackTrace();
