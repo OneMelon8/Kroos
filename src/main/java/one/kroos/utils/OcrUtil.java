@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import one.kroos.database.RecruitmentData;
+import one.kroos.database.RecruitTag;
 
 public class OcrUtil {
 	private static final String URL = "https://api.ocr.space/parse/imageurl?apikey=";
 
-	public static ArrayList<String> ocrRecruitment(String imageUrl) {
+	public static ArrayList<RecruitTag> ocrRecruitment(String imageUrl) {
 		String queryUrl = URL + EnviroHandler.getOcrToken() + "&url=" + imageUrl;
 		String result;
 		try {
@@ -28,14 +28,13 @@ public class OcrUtil {
 		JsonObject resultObj = (JsonObject) JsonParser.parseString(result);
 		String[] parsedText = resultObj.get("ParsedResults").getAsJsonArray().get(0).getAsJsonObject().get("ParsedText")
 				.getAsString().toLowerCase().split("\\r\\n");
-		ArrayList<String> output = new ArrayList<String>();
-		for (String text : parsedText)
-			for (String tag : RecruitmentData.TAGS) {
-				if (!text.equals(tag))
-					continue;
-				output.add(tag);
-				break;
-			}
+		ArrayList<RecruitTag> output = new ArrayList<RecruitTag>();
+		for (String text : parsedText) {
+			RecruitTag tag = RecruitTag.fromString(text);
+			if (tag == null)
+				continue;
+			output.add(tag);
+		}
 		return output;
 	}
 

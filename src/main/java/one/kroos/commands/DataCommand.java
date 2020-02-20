@@ -1,13 +1,16 @@
 package one.kroos.commands;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction.ReactionEmote;
 import net.dv8tion.jda.api.entities.User;
 import one.kroos.Bot;
@@ -15,8 +18,10 @@ import one.kroos.commands.helpers.CommandHandler;
 import one.kroos.commands.helpers.ReactionHandler;
 import one.kroos.database.Emojis;
 import one.kroos.database.ImgbbSpider;
-import one.kroos.database.RecruitmentData;
+import one.kroos.database.RecruitDatabase;
+import one.kroos.database.RecruitTag;
 import one.kroos.database.SqlSpider;
+import one.kroos.utils.CombinationUtil;
 import one.kroos.utils.GeneralTools;
 import one.kroos.utils.ImageHistogram;
 import one.kroos.utils.LogUtil;
@@ -54,7 +59,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 				continue;
 			}
 
-			ArrayList<String> result = OcrUtil.ocrRecruitment(url);
+			ArrayList<RecruitTag> result = OcrUtil.ocrRecruitment(url);
 			if (result == null || result.isEmpty()) {
 				bot.sendMessage("I don't see any tags in image #" + (a + 1) + "..?", channel);
 				continue;
@@ -62,18 +67,13 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 
 			// Upload tag data into database
 			StringBuilder sb = new StringBuilder();
-			for (String tag : result) {
-				tag = tag.toLowerCase();
-				if (!RecruitmentData.TAGS.contains(tag))
-					continue;
-
+			for (RecruitTag tag : result) {
 				// Upload data for each tag
-				SqlSpider.update(
-						"UPDATE ArknightsRecruit SET count=count+1 WHERE `index`=" + RecruitmentData.TAGS.indexOf(tag));
-				LogUtil.info("Updated " + tag + " in the database!");
+				SqlSpider.update("UPDATE ArknightsRecruit SET count=count+1 WHERE `index`=" + tag.getIndex());
+				LogUtil.info("Updated " + tag.getDisplayName() + " in the database!");
 
 				// Build string
-				sb.append("**" + RecruitmentData.getDisplayName(tag) + "**, ");
+				sb.append("**" + tag.getDisplayName() + "**, ");
 			}
 			sb.delete(sb.length() - 2, sb.length());
 
@@ -81,8 +81,53 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			SqlSpider.execute("INSERT INTO RecruitData(`data`) VALUES (\"" + sb.toString().replace("*", "") + "\")");
 			LogUtil.info("Updated bulk recruit tags in the database!");
 			bot.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
+
+			MessageEmbed emb = getRecruitResultEmbeded(result, a + 1);
+			if (emb == null)
+				continue;
+			bot.sendMessage(emb, channel);
 		}
 		SqlSpider.close();
+	}
+
+	private static MessageEmbed getRecruitResultEmbeded(ArrayList<RecruitTag> tags, int index) {
+		EmbedBuilder builder = new EmbedBuilder();
+		builder.setColor(Color.RED);
+		builder.setAuthor("Warning: Rare tag combination found in recruitment!");
+		builder.setDescription("*Operator(s) of 4☆ or higher found in image #" + index + "*");
+		boolean doReturn = false;
+
+		for (int a = tags.size(); a > 0; a--) {
+			ArrayList<int[]> combos = new CombinationUtil(tags.size()).getCombination(a);
+			for (int[] combo : combos) {
+				ArrayList<RecruitTag> comboTags = new ArrayList<RecruitTag>();
+				for (int c : combo)
+					comboTags.add(tags.get(c));
+				ArrayList<String> operators = RecruitDatabase.getIntersection(comboTags);
+				if (operators.isEmpty())
+					continue;
+				if (RecruitDatabase.hasLowRarityOperators(operators))
+					continue;
+
+				builder.addField(RecruitTag.getDisplayNames(comboTags) + ":", "> " + stringArrayListToString(operators),
+						false);
+				doReturn = true;
+			}
+		}
+
+		if (!doReturn)
+			return null;
+		return builder.build();
+	}
+
+	private static String stringArrayListToString(ArrayList<String> arr) {
+		if (arr.isEmpty())
+			return "";
+		StringBuilder sb = new StringBuilder();
+		for (String s : arr)
+			sb.append(s + ", ");
+		sb.delete(sb.length() - 2, sb.length());
+		return sb.toString();
 	}
 
 	/*
@@ -99,14 +144,13 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		// Only possibility here is Emojis.CHECK because there's only 2 reaction emojis
 		String text = message.getContentDisplay();
 		String[] tagArr = text.split("\\*\\*");
-		for (String tag : tagArr) {
-			if (!RecruitmentData.TAGS_DISPLAY.contains(tag))
+		for (String tagStr : tagArr) {
+			RecruitTag tag = RecruitTag.fromString(tagStr);
+			if (tag == null)
 				continue;
-
 			// Upload data for each tag
-			SqlSpider.update("UPDATE ArknightsRecruit SET count=count+1 WHERE `index`="
-					+ RecruitmentData.TAGS_DISPLAY.indexOf(tag));
-			LogUtil.info("Updated " + tag + " in the database!");
+			SqlSpider.update("UPDATE ArknightsRecruit SET count=count+1 WHERE `index`=" + tag.getIndex());
+			LogUtil.info("Updated " + tagStr + " in the database!");
 		}
 		bot.sendMessage("Database updated, thank you for contributing!", channel);
 	}

@@ -34,7 +34,7 @@ import one.kroos.Bot;
 import one.kroos.commands.helpers.CommandHandler;
 import one.kroos.config.BotConfig;
 import one.kroos.database.ImgbbSpider;
-import one.kroos.database.RecruitmentData;
+import one.kroos.database.RecruitTag;
 import one.kroos.database.SqlSpider;
 import one.kroos.utils.ColorUtil;
 import one.kroos.utils.LogUtil;
@@ -86,7 +86,7 @@ public class DataDisplayCommand extends CommandHandler {
 			double v = entry.getValue() / total;
 			if (v > max)
 				max = v;
-			dataset.addValue(v, "Chance", RecruitmentData.getDisplayName(entry.getKey()));
+			dataset.addValue(v, "Chance", RecruitTag.fromString(entry.getKey()).getDisplayName());
 		}
 		JFreeChart chart = ChartFactory.createBarChart(null, null, null, dataset, PlotOrientation.HORIZONTAL, false,
 				true, false);
