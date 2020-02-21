@@ -45,6 +45,10 @@ public class RecruitDatabase {
 		return highRarityOperators;
 	}
 
+	public static int getRarity(String operator) {
+		return getOperatorData().get(operator).getAsInt();
+	}
+
 	public static boolean hasLowRarityOperators(ArrayList<String> operators) {
 		if (operators.isEmpty())
 			return false;

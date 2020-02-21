@@ -109,7 +109,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 				if (RecruitDatabase.hasLowRarityOperators(operators))
 					continue;
 
-				builder.addField(RecruitTag.getDisplayNames(comboTags) + ":", "> " + stringArrayListToString(operators),
+				builder.addField(RecruitTag.getDisplayNames(comboTags) + ":", "> " + operatorsToString(operators),
 						false);
 				doReturn = true;
 			}
@@ -120,12 +120,12 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		return builder.build();
 	}
 
-	private static String stringArrayListToString(ArrayList<String> arr) {
+	private static String operatorsToString(ArrayList<String> arr) {
 		if (arr.isEmpty())
 			return "";
 		StringBuilder sb = new StringBuilder();
 		for (String s : arr)
-			sb.append(s + ", ");
+			sb.append(s + " [" + RecruitDatabase.getRarity(s) + "☆], ");
 		sb.delete(sb.length() - 2, sb.length());
 		return sb.toString();
 	}
