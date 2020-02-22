@@ -45,6 +45,17 @@ public class RecruitDatabase {
 		return highRarityOperators;
 	}
 
+	public static ArrayList<String> getRemoveUnderTwoStarOperators(ArrayList<String> operators) {
+		if (operators.isEmpty())
+			return new ArrayList<String>(); // return empty list
+		JsonObject operatorObj = getOperatorData();
+		ArrayList<String> output = new ArrayList<String>();
+		for (String operator : operators)
+			if (operatorObj.get(operator).getAsInt() > 2)
+				output.add(operator);
+		return output;
+	}
+
 	public static int getRarity(String operator) {
 		return getOperatorData().get(operator).getAsInt();
 	}

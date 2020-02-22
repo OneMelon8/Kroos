@@ -15,7 +15,9 @@ import net.dv8tion.jda.api.entities.MessageReaction.ReactionEmote;
 import net.dv8tion.jda.api.entities.User;
 import one.kroos.Bot;
 import one.kroos.commands.helpers.CommandHandler;
+import one.kroos.commands.helpers.ReactionDispatcher;
 import one.kroos.commands.helpers.ReactionHandler;
+import one.kroos.config.BotConfig;
 import one.kroos.database.Emojis;
 import one.kroos.database.ImgbbSpider;
 import one.kroos.database.RecruitDatabase;
@@ -39,6 +41,14 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
+		if (channel.getId().equals("667314115827597312")) {
+			bot.deleteMessage(message);
+			bot.sendMessage(author.getAsMention()
+					+ " Data collection is disabled on this channel to avoid spam, try **#moe-bot** or **#botstuff** instead",
+					channel);
+			return;
+		}
+
 		List<Attachment> attachments = message.getAttachments();
 		if (attachments.isEmpty() || !attachments.get(0).isImage()) {
 			bot.sendMessage(getHelpEmbeded(), channel);
@@ -80,9 +90,12 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			// Upload data for bulk tags
 			SqlSpider.execute("INSERT INTO RecruitData(`data`) VALUES (\"" + sb.toString().replace("*", "") + "\")");
 			LogUtil.info("Updated bulk recruit tags in the database!");
-			bot.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
+			Message reactMessage = bot
+					.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
+			bot.reactDetails(reactMessage); // react with magnifying glass => see more details
+			ReactionDispatcher.register(reactMessage, this, Emojis.MAGNIYFING_GLASS);
 
-			MessageEmbed emb = getRecruitResultEmbeded(result, a + 1);
+			MessageEmbed emb = getRecruitResultEmbeded(result, a + 1, true);
 			if (emb == null)
 				continue;
 			bot.sendMessage(emb, channel);
@@ -90,23 +103,32 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		SqlSpider.close();
 	}
 
-	private static MessageEmbed getRecruitResultEmbeded(ArrayList<RecruitTag> tags, int index) {
+	private static MessageEmbed getRecruitResultEmbeded(ArrayList<RecruitTag> tags, int index, boolean isAutoMessage) {
 		EmbedBuilder builder = new EmbedBuilder();
-		builder.setColor(Color.RED);
-		builder.setAuthor("Warning: Rare tag combination found in recruitment!");
-		builder.setDescription("*Operator(s) of 4☆ or higher found in image #" + index + "*");
+		if (isAutoMessage) {
+			builder.setColor(Color.RED);
+			builder.setAuthor("Warning: Rare tag combination found in recruitment!");
+			builder.setDescription("*Operator(s) of 4☆ or higher found in image #" + index + "*");
+		} else {
+			builder.setColor(BotConfig.COLOR_MISC);
+			builder.setAuthor("Recruit Tag Results:");
+			builder.setDescription("*Tags: " + RecruitTag.getDisplayNames(tags) + "*");
+		}
 		boolean doReturn = false;
 
+		CombinationUtil cUtil = new CombinationUtil(tags.size());
 		for (int a = tags.size(); a > 0; a--) {
-			ArrayList<int[]> combos = new CombinationUtil(tags.size()).getCombination(a);
+			ArrayList<int[]> combos = cUtil.getCombination(a); // combo of length a
 			for (int[] combo : combos) {
 				ArrayList<RecruitTag> comboTags = new ArrayList<RecruitTag>();
 				for (int c : combo)
 					comboTags.add(tags.get(c));
 				ArrayList<String> operators = RecruitDatabase.getIntersection(comboTags);
+				if (isAutoMessage)
+					operators = RecruitDatabase.getRemoveUnderTwoStarOperators(operators);
 				if (operators.isEmpty())
 					continue;
-				if (RecruitDatabase.hasLowRarityOperators(operators))
+				if (isAutoMessage && RecruitDatabase.hasLowRarityOperators(operators))
 					continue;
 
 				builder.addField(RecruitTag.getDisplayNames(comboTags) + ":", "> " + operatorsToString(operators),
@@ -130,29 +152,19 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		return sb.toString();
 	}
 
-	/*
-	 * Unused because of direct database implementation
-	 */
 	@Override
 	public void onReact(User user, ReactionEmote emote, Message message, MessageChannel channel, Guild guild) {
-		bot.removeAllReactions(message);
-
-		if (emote.getName().equals(Emojis.CROSS)) {
-			bot.editMessage(message, "Hmm, I must have closed my eyes on that one, try again?");
+		if (!emote.getName().equals(Emojis.MAGNIYFING_GLASS))
 			return;
-		}
-		// Only possibility here is Emojis.CHECK because there's only 2 reaction emojis
-		String text = message.getContentDisplay();
-		String[] tagArr = text.split("\\*\\*");
-		for (String tagStr : tagArr) {
+		bot.removeAllReactions(message);
+		ArrayList<RecruitTag> tags = new ArrayList<RecruitTag>();
+		for (String tagStr : message.getContentDisplay().split("\\*\\*")) {
 			RecruitTag tag = RecruitTag.fromString(tagStr);
 			if (tag == null)
 				continue;
-			// Upload data for each tag
-			SqlSpider.update("UPDATE ArknightsRecruit SET count=count+1 WHERE `index`=" + tag.getIndex());
-			LogUtil.info("Updated " + tagStr + " in the database!");
+			tags.add(tag);
 		}
-		bot.sendMessage("Database updated, thank you for contributing!", channel);
+		bot.editMessage(message, getRecruitResultEmbeded(tags, 0, false));
 	}
 
 	public static boolean isDataIntent(Message message) {
