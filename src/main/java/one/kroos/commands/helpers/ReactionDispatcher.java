@@ -32,6 +32,10 @@ public class ReactionDispatcher {
 		register(msg, event, Arrays.asList(emoteName), BotConfig.REACTION_TIME_OUT);
 	}
 
+	public static void register(Message msg, ReactionHandler event, ArrayList<String> emoteName) {
+		register(msg, event, emoteName, BotConfig.REACTION_TIME_OUT);
+	}
+
 	public static void register(Message msg, ReactionHandler event, long timeoutInSeconds, String... emoteName) {
 		register(msg, event, Arrays.asList(emoteName), timeoutInSeconds);
 	}
@@ -87,19 +91,9 @@ public class ReactionDispatcher {
 		if (!botReacted)
 			return;
 
-		// ===================================================================================================================
-		// TODO: check unused
-		// ===================================================================================================================
-		// Check timeout
-//		long time = msg.getTimeCreated().toEpochSecond();
-//		if (msg.getTimeEdited() != null)
-//			time = msg.getTimeEdited().toEpochSecond();
-//		boolean timedOut = System.currentTimeMillis() / 1000 - time > BotConfig.REACTION_TIME_OUT;
-		// If timed out (which shouldn't happen cause cleanup, but safety), cancel event
-//		if (timedOut)
-//			return;
-
 		String emoteName = emo.getName();
+		if (emo.isEmote())
+			emoteName = emo.getEmote().getAsMention();
 		LogUtil.info(user.getAsTag() + " reacted with " + emo.getName() + " on message " + msg.getContentRaw());
 
 		// Use iterator to avoid concurrent deleting exceptions

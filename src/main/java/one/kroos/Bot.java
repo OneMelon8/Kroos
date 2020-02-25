@@ -1,6 +1,7 @@
 package one.kroos;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,8 +19,10 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.MessageReaction.ReactionEmote;
 import one.kroos.commands.DataCommand;
 import one.kroos.commands.DataDisplayCommand;
+import one.kroos.commands.Echo;
 import one.kroos.commands.Help;
 import one.kroos.commands.Pat;
 import one.kroos.commands.Ping;
@@ -69,6 +72,7 @@ public class Bot {
 		new Ping(this);
 		new Help(this);
 		new Pat(this);
+		new Echo(this);
 
 		new DataCommand(this);
 		new DataDisplayCommand(this);
@@ -121,22 +125,43 @@ public class Bot {
 		return getJDA().getEmoteById(Emotes.getId(emote));
 	}
 
-	public void addReaction(Message msg, String reaction) {
-		msg.addReaction(reaction).queue();
+	public String getEmoteName(ReactionEmote emote) {
+		if (emote.isEmoji())
+			return emote.getEmoji();
+		return emote.getEmote().getAsMention();
 	}
 
-	public void addReaction(Message msg, String... reactions) {
-		for (String reaction : reactions)
-			this.addReaction(msg, reaction);
+	public void addReaction(Message msg, String reaction) {
+		msg.addReaction(reaction).queue();
 	}
 
 	public void addReaction(Message msg, Emote reaction) {
 		msg.addReaction(reaction).queue();
 	}
 
-	public void addReaction(Message msg, Emote... reactions) {
+	public void addReactions(Message msg, String... reactions) {
+		for (String reaction : reactions)
+			this.addReaction(msg, reaction);
+	}
+
+	public void addReactions(Message msg, ArrayList<String> reactions) {
+		for (String reaction : reactions)
+			this.addReaction(msg, reaction);
+	}
+
+	public void addEmoteReactions(Message msg, Emote... reactions) {
 		for (Emote reaction : reactions)
 			this.addReaction(msg, reaction);
+	}
+
+	public void addEmoteReactions(Message msg, String... reactions) {
+		for (String reaction : reactions)
+			this.addReaction(msg, this.getEmote(reaction));
+	}
+
+	public void addEmoteReactions(Message msg, ArrayList<String> reactions) {
+		for (String reaction : reactions)
+			this.addReaction(msg, this.getEmote(reaction));
 	}
 
 	public void removeReaction(Message msg, String reaction) {

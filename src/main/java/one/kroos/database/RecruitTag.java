@@ -21,6 +21,24 @@ public enum RecruitTag {
 					"Healing", "Support", "DPS", "AOE", "Slow", "Survival", "Defense", "Debuff", "Shift", // affix
 					"Crowd Control", "Nuker", "Summon", "Fast-Redeploy", "DP-Recovery", "Robot"));
 
+	public static ArrayList<RecruitTag> getQualificationTags() {
+		return new ArrayList<RecruitTag>(Arrays.asList(STARTER, SENIOR_OPERATOR, TOP_OPERATOR));
+	}
+
+	public static ArrayList<RecruitTag> getPositionTags() {
+		return new ArrayList<RecruitTag>(Arrays.asList(MELEE, RANGED));
+	}
+
+	public static ArrayList<RecruitTag> getClassTags() {
+		return new ArrayList<RecruitTag>(
+				Arrays.asList(GUARD, MEDIC, VANGUARD, CASTER, SNIPER, DEFENDER, SUPPORTER, SPECIALIST));
+	}
+
+	public static ArrayList<RecruitTag> getAffixTags() {
+		return new ArrayList<RecruitTag>(Arrays.asList(HEALING, SUPPORT, DPS, AOE, SLOW, SURVIVAL, DEFENSE, DEBUFF,
+				SHIFT, CROWD_CONTROL, NUKER, SUMMON, FAST_REDEPLOY, DP_RECOVERY, ROBOT));
+	}
+
 	public static RecruitTag fromString(String tag) {
 		for (int a = 0; a < RecruitTag.values().length; a++)
 			if (tag.equalsIgnoreCase(TAGS_DISPLAY.get(a)))

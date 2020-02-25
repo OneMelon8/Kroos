@@ -4,18 +4,36 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import one.kroos.utils.CombinationUtil;
 import one.kroos.utils.FileUtil;
 import one.kroos.utils.LogUtil;
 
 public class RecruitDatabase {
 
 	private static JsonObject recruitData, operatorData;
+
+	public static ArrayList<String> getUnion(ArrayList<RecruitTag> tags) {
+		if (tags.isEmpty())
+			return new ArrayList<String>(); // return empty list
+		JsonObject recruitObj = getRecruitData();
+		ArrayList<String> operatorsByTag = new ArrayList<String>();
+		Type listType = new TypeToken<ArrayList<String>>() {
+		}.getType();
+		for (RecruitTag tag : tags)
+			operatorsByTag.addAll(new Gson().fromJson(recruitObj.get(tag.getDisplayName()).getAsJsonArray(), listType));
+
+		Set<String> set = new HashSet<>(operatorsByTag);
+		operatorsByTag.clear();
+		operatorsByTag.addAll(set);
+
+		return operatorsByTag;
+	}
 
 	public static ArrayList<String> getIntersection(ArrayList<RecruitTag> tags) {
 		if (tags.isEmpty())
@@ -97,32 +115,12 @@ public class RecruitDatabase {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
-		ArrayList<RecruitTag> tags = new ArrayList<RecruitTag>(Arrays.asList(RecruitTag.SENIOR_OPERATOR,
-				RecruitTag.VANGUARD, RecruitTag.CASTER, RecruitTag.MELEE, RecruitTag.DP_RECOVERY));
-
-		for (int b = tags.size(); b > 0; b--) {
-			ArrayList<int[]> combos = new CombinationUtil(tags.size()).getCombination(b);
-			for (int[] combo : combos) {
-				ArrayList<RecruitTag> comboTags = new ArrayList<RecruitTag>();
-				for (int c : combo)
-					comboTags.add(tags.get(c));
-				ArrayList<String> operators = getIntersection(comboTags);
-				if (operators.isEmpty())
-					continue;
-				if (hasLowRarityOperators(operators))
-					continue;
-				System.out.println(RecruitTag.getDisplayNames(comboTags) + ":");
-				for (String s : operators)
-					System.out.print(s + ", ");
-				System.out.println();
-			}
-		}
-
-	}
-
-	public static void printIntArr(int[] arr) {
-		for (int a : arr)
-			System.out.print(a + ", ");
+		ArrayList<RecruitTag> tags = new ArrayList<RecruitTag>(
+				Arrays.asList(RecruitTag.NUKER, RecruitTag.SENIOR_OPERATOR));
+		ArrayList<String> operators = getUnion(tags);
+		System.out.println(RecruitTag.getDisplayNames(tags) + ":");
+		for (String s : operators)
+			System.out.print(s + ", ");
 		System.out.println();
 	}
 

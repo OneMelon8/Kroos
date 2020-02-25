@@ -15,7 +15,8 @@ import one.kroos.config.BotConfig;
 public class ChatEventListener extends ListenerAdapter {
 
 	public static final ArrayList<String> WHITELISTED_CHANNELS = new ArrayList<String>(
-			Arrays.asList("581608190907514922", "667314115827597312", "453918676022722561", "439773791023792130"));
+			Arrays.asList("581608190907514922", "679390408312094736", "667314115827597312", "453918676022722561",
+					"439773791023792130"));
 
 	@Override
 	public void onReady(ReadyEvent event) {
