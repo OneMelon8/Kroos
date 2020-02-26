@@ -41,6 +41,10 @@ public class ReactionDispatcher {
 	}
 
 	public static void register(Message msg, ReactionHandler event, List<String> emoteNames, long timeoutInSeconds) {
+		// Register for clean-up
+		purgeReactions.put(msg, System.currentTimeMillis() / 1000 + timeoutInSeconds);
+
+		// Register for command firing
 		final Object[] info = new Object[] { msg, new ArrayList<String>(emoteNames) };
 		dynamicRegisteredListeners.put(info, event);
 		App.bot.scheduleDelayedTask(new TimerTask() {
@@ -51,9 +55,6 @@ public class ReactionDispatcher {
 				dynamicRegisteredListeners.remove(info);
 			}
 		}, timeoutInSeconds * 1000);
-
-		// Register for clean-up
-		purgeReactions.put(msg, System.currentTimeMillis() / 1000 + timeoutInSeconds);
 	}
 
 	public static void cleanUp() {
@@ -117,6 +118,6 @@ public class ReactionDispatcher {
 				purgeReactions.remove(msg);
 		}
 		// No event found (shouldn't happen)
-
+		LogUtil.error("No event found?!");
 	}
 }

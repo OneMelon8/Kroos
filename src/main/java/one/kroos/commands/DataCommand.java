@@ -41,6 +41,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
+		bot.sendThinkingPacket(channel);
 		if (channel.getId().equals("667314115827597312")) {
 			bot.deleteMessage(message);
 			bot.sendMessage(author.getAsMention()
