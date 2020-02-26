@@ -42,12 +42,8 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
 		bot.sendThinkingPacket(channel);
-		if (channel.getId().equals("667314115827597312")) {
-			bot.sendMessage(author.getAsMention()
-					+ " Data collection is disabled on this channel to avoid spam, try **#moe-bot** or **#botstuff** instead",
-					channel);
+		if (channel.getId().equals("667314115827597312"))
 			return;
-		}
 
 		List<Attachment> attachments = message.getAttachments();
 		if (attachments.isEmpty() || !attachments.get(0).isImage()) {
