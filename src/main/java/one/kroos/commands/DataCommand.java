@@ -43,7 +43,6 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			Guild guild) {
 		bot.sendThinkingPacket(channel);
 		if (channel.getId().equals("667314115827597312")) {
-			bot.deleteMessage(message);
 			bot.sendMessage(author.getAsMention()
 					+ " Data collection is disabled on this channel to avoid spam, try **#moe-bot** or **#botstuff** instead",
 					channel);
