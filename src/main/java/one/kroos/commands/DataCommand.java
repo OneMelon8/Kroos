@@ -41,10 +41,18 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
-		bot.sendThinkingPacket(channel);
 		if (channel.getId().equals("667314115827597312"))
 			return;
 
+		// DELETE WHEN DONE
+		if (true) {
+			bot.sendMessage(
+					"Kroos will be down for a while since the MySQL server host is shit, I'll need to transfer hosts now -- 🍉",
+					channel);
+			return;
+		}
+
+		bot.sendThinkingPacket(channel);
 		List<Attachment> attachments = message.getAttachments();
 		if (attachments.isEmpty() || !attachments.get(0).isImage()) {
 			bot.sendMessage(getHelpEmbeded(), channel);
