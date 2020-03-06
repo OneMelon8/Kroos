@@ -44,14 +44,6 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		if (channel.getId().equals("667314115827597312"))
 			return;
 
-		// DELETE WHEN DONE
-		if (true) {
-			bot.sendMessage(
-					"Kroos will be down for a while since the MySQL server host is shit, I'll need to transfer hosts now -- 🍉",
-					channel);
-			return;
-		}
-
 		bot.sendThinkingPacket(channel);
 		List<Attachment> attachments = message.getAttachments();
 		if (attachments.isEmpty() || !attachments.get(0).isImage()) {
@@ -83,8 +75,11 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			StringBuilder sb = new StringBuilder();
 			for (RecruitTag tag : result) {
 				// Upload data for each tag
-				SqlSpider.update("UPDATE ArknightsRecruit SET count=count+1 WHERE `index`=" + tag.getIndex());
-				LogUtil.info("Updated " + tag.getDisplayName() + " in the database!");
+				// TODO: re-enable when done
+				if (false)
+					return;
+//				SqlSpider.update("UPDATE ArknightsRecruit SET count=count+1 WHERE `index`=" + tag.getIndex());
+//				LogUtil.info("Updated " + tag.getDisplayName() + " in the database!");
 
 				// Build string
 				sb.append("**" + tag.getDisplayName() + "**, ");
@@ -92,10 +87,13 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			sb.delete(sb.length() - 2, sb.length());
 
 			// Upload data for bulk tags
-			SqlSpider.execute("INSERT INTO RecruitData(`data`) VALUES (\"" + sb.toString().replace("*", "") + "\")");
-			LogUtil.info("Updated bulk recruit tags in the database!");
-			Message reactMessage = bot
-					.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
+//			SqlSpider.execute("INSERT INTO RecruitData(`data`) VALUES (\"" + sb.toString().replace("*", "") + "\")");
+//			LogUtil.info("Updated bulk recruit tags in the database!");
+//			Message reactMessage = bot
+//			.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
+			bot.sendMessage("Data **not** collected, database transfer in progress...", channel);
+			Message reactMessage = bot.sendMessage("Tags detected in image #" + (a + 1) + ": " + sb.toString() + "!",
+					channel);
 			bot.reactDetails(reactMessage); // react with magnifying glass => see more details
 			ReactionDispatcher.register(reactMessage, this, Emojis.MAGNIYFING_GLASS);
 
