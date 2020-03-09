@@ -57,14 +57,6 @@ public class DataDisplayCommand extends CommandHandler implements ReactionHandle
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
-		// DELETE WHEN DONE
-		if (true) {
-			bot.sendMessage(
-					"Kroos will be down for a while since the MySQL server host is shit, I'll need to transfer hosts now -- 🍉",
-					channel);
-			return;
-		}
-
 		bot.sendThinkingPacket(channel);
 		ResultSet rs = SqlSpider.query("SELECT * FROM ArknightsRecruit");
 		HashMap<RecruitTag, Integer> data = parseData(rs);
