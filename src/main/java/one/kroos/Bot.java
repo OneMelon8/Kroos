@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.MessageReaction.ReactionEmote;
 import one.kroos.commands.DataCommand;
 import one.kroos.commands.DataDisplayCommand;
 import one.kroos.commands.Echo;
+import one.kroos.commands.Gacha;
 import one.kroos.commands.Help;
 import one.kroos.commands.Pat;
 import one.kroos.commands.Ping;
@@ -73,6 +74,7 @@ public class Bot {
 		new Help(this);
 		new Pat(this);
 		new Echo(this);
+		new Gacha(this);
 
 		new DataCommand(this);
 		new DataDisplayCommand(this);
