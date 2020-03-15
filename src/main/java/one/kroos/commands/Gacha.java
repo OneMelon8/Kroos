@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import one.kroos.Bot;
 import one.kroos.commands.helpers.CommandHandler;
+import one.kroos.database.gacha.GachaMember;
 
 public class Gacha extends CommandHandler {
 
@@ -22,6 +23,13 @@ public class Gacha extends CommandHandler {
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
+		if (args.length > 0 && args[0] == "echo") {
+			GachaMember m = new GachaMember(guild.getMember(author));
+			m.debug();
+			bot.reactCheck(message);
+			return;
+		}
+
 		bot.sendThinkingPacket(channel);
 		Random r = new Random();
 		List<Member> members = guild.getMembers();
