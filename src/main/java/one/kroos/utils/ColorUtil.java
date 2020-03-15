@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import one.kroos.config.BotConfig;
+
 public class ColorUtil {
 
 	public static Color fromHex(String color) {
@@ -26,6 +28,8 @@ public class ColorUtil {
 	}
 
 	public static Color getDominantColor(BufferedImage image) {
+		if (image == null)
+			return BotConfig.COLOR_MISC;
 		int height = image.getHeight();
 		int width = image.getWidth();
 

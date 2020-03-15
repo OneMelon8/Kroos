@@ -32,7 +32,7 @@ public class ImgbbSpider {
 	public static String uploadImage(BufferedImage image) {
 		try {
 			if (image == null)
-				return null;
+				return BotConfig.URL_RHODES;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(image, "png", baos);
 
