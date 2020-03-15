@@ -38,7 +38,7 @@ public class CommandDispatcher {
 
 		// Check cool-down to stop spamming
 		String authorId = e.getAuthor().getId();
-		int cooldownTime = 2500; // Milliseconds
+		int cooldownTime = 2000; // Milliseconds
 		if (cooldown.containsKey(authorId)) {
 			long msLeft = cooldown.get(authorId) + cooldownTime - System.currentTimeMillis();
 			if (msLeft > 0) {

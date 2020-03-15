@@ -2,7 +2,6 @@ package one.kroos.commands;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import net.dv8tion.jda.api.entities.Guild;
@@ -10,14 +9,18 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import one.kroos.App;
 import one.kroos.Bot;
 import one.kroos.commands.helpers.CommandHandler;
+import one.kroos.config.GachaConfig;
 import one.kroos.database.gacha.GachaMember;
 
 public class Gacha extends CommandHandler {
 
+	private static HashMap<String, Long> cooldown = new HashMap<String, Long>();
+
 	public Gacha(Bot bot) {
-		super(bot, "gacha", "=w=", null, PREFIX + "gacha", null);
+		super(bot, "gacha", "Try your luck?", null, PREFIX + "gacha", null);
 	}
 
 	@Override
@@ -28,23 +31,31 @@ public class Gacha extends CommandHandler {
 			bot.sendMessage(m.generateEmbedded(), channel);
 			return;
 		}
-
 		bot.sendThinkingPacket(channel);
+
+		String authorId = author.getId();
+		if (cooldown.containsKey(authorId)) {
+			long msLeft = cooldown.get(authorId) + GachaConfig.COOLDOWN_MS - System.currentTimeMillis();
+			if (msLeft > 0) {
+				App.bot.reactWait(message);
+				return;
+			}
+		}
+		cooldown.put(authorId, System.currentTimeMillis());
+
 		Random r = new Random();
 		List<Member> members = guild.getMembers();
-		HashMap<Member, Integer> results = new HashMap<Member, Integer>();
-		for (int a = 0; a < 10; a++) {
-			Member m = members.get(r.nextInt(members.size()));
-			results.put(m, results.getOrDefault(m, 0) + 1);
-		}
+		Member m = members.get(r.nextInt(members.size()));
 
-		StringBuilder sb = new StringBuilder(author.getAsMention() + " You received ");
-		for (Entry<Member, Integer> ent : results.entrySet())
-			sb.append((ent.getValue() == 1 ? "`" + bot.getUserDisplayName(ent.getKey()) + "`"
-					: "`" + bot.getUserDisplayName(ent.getKey()) + "` x" + ent.getValue()) + ", ");
-		sb.delete(sb.length() - 2, sb.length());
-		sb.append(" from the gacha");
-		bot.sendMessage(sb.toString(), channel);
+//		StringBuilder sb = new StringBuilder(author.getAsMention() + " You received ");
+//		for (Entry<Member, Integer> ent : results.entrySet())
+//			sb.append((ent.getValue() == 1 ? "`" + bot.getUserDisplayName(ent.getKey()) + "`"
+//					: "`" + bot.getUserDisplayName(ent.getKey()) + "` x" + ent.getValue()) + ", ");
+//		sb.delete(sb.length() - 2, sb.length());
+//		sb.append(" from the gacha");
+
+		GachaMember gm = new GachaMember(m);
+		bot.sendMessage(gm.generateEmbedded(), channel);
 	}
 
 }
