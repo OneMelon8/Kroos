@@ -9,11 +9,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import one.kroos.App;
 import one.kroos.Bot;
 import one.kroos.commands.helpers.CommandHandler;
 import one.kroos.config.GachaConfig;
 import one.kroos.database.gacha.GachaMember;
+import one.kroos.utils.TimeFormatter;
 
 public class Gacha extends CommandHandler {
 
@@ -31,18 +31,19 @@ public class Gacha extends CommandHandler {
 			bot.sendMessage(m.generateEmbedded(), channel);
 			return;
 		}
-		bot.sendThinkingPacket(channel);
 
 		String authorId = author.getId();
 		if (cooldown.containsKey(authorId)) {
 			long msLeft = cooldown.get(authorId) + GachaConfig.COOLDOWN_MS - System.currentTimeMillis();
 			if (msLeft > 0) {
-				App.bot.reactWait(message);
+				bot.sendMessage(author.getAsMention() + " Please wait " + TimeFormatter.getCountDownSimple(msLeft)
+						+ " before trying again!", channel);
 				return;
 			}
 		}
 		cooldown.put(authorId, System.currentTimeMillis());
 
+		bot.sendThinkingPacket(channel);
 		Random r = new Random();
 		List<Member> members = guild.getMembers();
 		Member m = members.get(r.nextInt(members.size()));
