@@ -23,7 +23,7 @@ public class Gacha extends CommandHandler {
 	@Override
 	public void onCommand(User author, String command, String[] args, Message message, MessageChannel channel,
 			Guild guild) {
-		if (args.length > 0 && args[0] == "echo") {
+		if (args.length > 0 && args[0].equals("echo")) {
 			GachaMember m = new GachaMember(guild.getMember(author));
 			m.debug();
 			bot.reactCheck(message);
