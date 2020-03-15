@@ -34,7 +34,7 @@ public class CommandDispatcher {
 
 		String[] msgArr = msg.substring(BotConfig.PREFIX.length()).split(" ");
 		String userCmd = msgArr[0].toLowerCase();
-		LogUtil.info(e.getAuthor().getAsTag() + " executed " + msg);
+		LogUtil.info(e.getAuthor().getAsTag() + " executed " + e.getMessage().getContentDisplay());
 
 		// Check cool-down to stop spamming
 		String authorId = e.getAuthor().getId();

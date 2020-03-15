@@ -25,8 +25,7 @@ public class Gacha extends CommandHandler {
 			Guild guild) {
 		if (args.length > 0 && args[0].equals("echo")) {
 			GachaMember m = new GachaMember(guild.getMember(author));
-			m.debug();
-			bot.reactCheck(message);
+			bot.sendMessage(m.generateEmbedded(), channel);
 			return;
 		}
 

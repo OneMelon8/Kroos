@@ -16,10 +16,14 @@ public class ImageTools {
 		return f;
 	}
 
-	public static BufferedImage getImageFromUrl(String urlStr) throws IOException {
-		final URL url = new URL(urlStr);
-		final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestProperty("User-Agent", "Chrome");
-		return ImageIO.read(connection.getInputStream());
+	public static BufferedImage getImageFromUrl(String urlStr) {
+		try {
+			final URL url = new URL(urlStr);
+			final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestProperty("User-Agent", "Chrome");
+			return ImageIO.read(connection.getInputStream());
+		} catch (IOException e) {
+			return null;
+		}
 	}
 }
