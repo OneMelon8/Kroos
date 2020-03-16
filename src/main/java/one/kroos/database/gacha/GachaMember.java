@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
+import one.kroos.config.BotConfig;
 import one.kroos.database.Emotes;
 import one.kroos.database.ImgbbSpider;
 import one.kroos.database.RecruitTag;
@@ -77,8 +78,10 @@ public class GachaMember {
 			g2d.drawImage(GachaAssets.getImage(GachaAssets.BACKGROUND_6), 0, 0, null);
 
 		// LAYER 1 -- User profile picture
-		g2d.drawImage(ImageTools.getImageFromUrl(this.member.getUser().getAvatarUrl()).getScaledInstance(128, 128,
-				Image.SCALE_DEFAULT), 0, 0, null);
+		String url = this.member.getUser().getAvatarUrl();
+		if (url == null)
+			url = BotConfig.URL_DISCORD;
+		g2d.drawImage(ImageTools.getImageFromUrl(url).getScaledInstance(128, 128, Image.SCALE_DEFAULT), 0, 0, null);
 
 		// LAYER 2 -- Frame overlay
 		if (this.rarity <= 3)
