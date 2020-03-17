@@ -45,7 +45,7 @@ public class GachaMember {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Rarity: " + this.getRarityEmoteStr());
-		sb.append("\nClass: **" + this.clazz.getEmote() + "**");
+		sb.append("\nClass: **" + this.clazz.getEmote() + " " + this.clazz.getDisplayName() + "**");
 		sb.append("\nAffix: **" + this.affix.getDisplayName() + "**");
 		builder.addField(new Field("**Information:**", sb.toString(), false));
 
@@ -54,7 +54,7 @@ public class GachaMember {
 
 	private String getRarityEmoteStr() {
 		StringBuilder sb = new StringBuilder();
-		if (this.rarity >= 3)
+		if (this.rarity >= 4)
 			for (int a = 0; a < this.rarity; a++)
 				sb.append(Emotes.BANDORI_STAR_PREMIUM);
 		else

@@ -38,4 +38,8 @@ public enum GachaClass {
 		}
 		return null;
 	}
+
+	public String getDisplayName() {
+		return this.toString().substring(0, 1) + this.toString().substring(1).toLowerCase();
+	}
 }
