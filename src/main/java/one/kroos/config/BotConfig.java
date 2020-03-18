@@ -30,6 +30,6 @@ public class BotConfig {
 	 */
 	public static final String URL_404 = "https://i.imgur.com/nYJtkaS.png";
 	public static final String URL_RHODES = "https://i.imgur.com/mXnN6vZ.png";
-	public static final String URL_DISCORD = "https://i.imgur.com/PhslMBA.png";
+	public static final String URL_DISCORD = "https://i.imgur.com/EqNcVPg.png";
 
 }
