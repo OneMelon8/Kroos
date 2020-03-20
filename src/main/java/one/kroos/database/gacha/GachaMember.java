@@ -32,7 +32,7 @@ public class GachaMember {
 
 		// Generate
 		Random r = new Random(m.getIdLong());
-		this.rarity = r.nextInt(6) + 1; // 1-6 stars
+		this.rarity = this.randomRarity(r);
 		this.clazz = GachaClass.values()[r.nextInt(GachaClass.size())]; // class
 		this.affix = RecruitTag.getAffixTags().get(r.nextInt(RecruitTag.getAffixTags().size())); // affix
 	}
@@ -50,6 +50,27 @@ public class GachaMember {
 		builder.addField(new Field("**Information:**", sb.toString(), false));
 
 		return builder.build();
+	}
+
+	private int randomRarity(Random r) {
+		int gen = r.nextInt(100);
+		// 10% chance of 1 star
+		if (gen < 10)
+			return 1;
+		// 15% chance of 2 stars
+		if (gen < 25)
+			return 2;
+		// 35% chance of 3 stars
+		if (gen < 50)
+			return 3;
+		// 30% chance of 4 stars
+		if (gen < 90)
+			return 4;
+		// 8% chance of 5 stars
+		if (gen < 98)
+			return 5;
+		// 2% chance of 6 stars
+		return 6;
 	}
 
 	private String getRarityEmoteStr() {
