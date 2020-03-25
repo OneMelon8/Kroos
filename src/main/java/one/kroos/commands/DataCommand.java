@@ -87,7 +87,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 			SqlSpider.execute("INSERT INTO RecruitData(`data`) VALUES (\"" + sb.toString().replace("*", "") + "\")");
 			LogUtil.info("Updated bulk recruit tags in the database!");
 			Message reactMessage = bot
-			.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
+					.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
 			bot.reactDetails(reactMessage); // react with magnifying glass => see more details
 			ReactionDispatcher.register(reactMessage, this, Emojis.MAGNIYFING_GLASS);
 
@@ -175,7 +175,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		try {
 			double sim = new ImageHistogram().match(RECRUIT_IMAGE_URL, url);
 			LogUtil.info("Recruitment data similarity: " + GeneralTools.getPercentage(sim));
-			return sim > 0.984;
+			return sim > 0.98;
 		} catch (IOException e) {
 			LogUtil.error("IOException caught when comparing recruiting images...");
 			e.printStackTrace();

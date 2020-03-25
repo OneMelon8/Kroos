@@ -39,7 +39,12 @@ public class GachaMember {
 
 	public MessageEmbed generateEmbedded() {
 		EmbedBuilder builder = new EmbedBuilder();
-		builder.setColor(ColorUtil.getDominantColor(ImageTools.getImageFromUrl(this.member.getUser().getAvatarUrl())));
+		try {
+			builder.setColor(
+					ColorUtil.getDominantColor(ImageTools.getImageFromUrl(this.member.getUser().getAvatarUrl())));
+		} catch (Exception e) {
+			builder.setColor(BotConfig.COLOR_MISC);
+		}
 		builder.setAuthor(this.member.getEffectiveName());
 		builder.setThumbnail(ImgbbSpider.uploadImage(this.generateIcon()));
 
