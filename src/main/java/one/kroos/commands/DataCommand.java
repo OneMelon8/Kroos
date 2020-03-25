@@ -69,8 +69,8 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 
 			// Intercept image if it's large
 			BufferedImage screenshot = ImageTools.getImageFromUrl(url);
-			while (screenshot.getWidth() * screenshot.getHeight() > 1000 * 800)
-				screenshot = ImageTools.resize(screenshot, 0.8);
+			while (screenshot.getWidth() > 1000 & screenshot.getHeight() > 500)
+				screenshot = ImageTools.crop(screenshot, 1000, 500);
 			// Upload to ImgBB
 			url = ImgbbSpider.uploadImage(screenshot);
 

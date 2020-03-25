@@ -29,6 +29,18 @@ public class ImageTools {
 		}
 	}
 
+	public static BufferedImage crop(BufferedImage original, int newWidth, int newHeight) {
+		BufferedImage result = original.getSubimage((original.getWidth() - newWidth) / 2,
+				(original.getHeight() - newHeight) / 2, newWidth, newHeight);
+		try {
+			imageToFile(result);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 	public static BufferedImage resize(BufferedImage img, double scale) {
 		return resize(img, (int) (img.getWidth() * scale), (int) (img.getHeight() * scale));
 	}
