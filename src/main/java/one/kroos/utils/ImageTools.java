@@ -1,5 +1,7 @@
 package one.kroos.utils;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -25,5 +27,20 @@ public class ImageTools {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+
+	public static BufferedImage resize(BufferedImage img, double scale) {
+		return resize(img, (int) (img.getWidth() * scale), (int) (img.getHeight() * scale));
+	}
+
+	public static BufferedImage resize(BufferedImage img, int width, int height) {
+		Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		BufferedImage dimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = dimg.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+
+		return dimg;
 	}
 }

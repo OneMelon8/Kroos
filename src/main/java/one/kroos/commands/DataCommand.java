@@ -1,6 +1,7 @@
 package one.kroos.commands;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import one.kroos.database.SqlSpider;
 import one.kroos.utils.CombinationUtil;
 import one.kroos.utils.GeneralTools;
 import one.kroos.utils.ImageHistogram;
+import one.kroos.utils.ImageTools;
 import one.kroos.utils.LogUtil;
 import one.kroos.utils.OcrUtil;
 
@@ -64,6 +66,13 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 						channel);
 				continue;
 			}
+
+			// Intercept image if it's large
+			BufferedImage screenshot = ImageTools.getImageFromUrl(url);
+			while (screenshot.getWidth() * screenshot.getHeight() > 1000 * 800)
+				screenshot = ImageTools.resize(screenshot, 0.8);
+			// Upload to ImgBB
+			url = ImgbbSpider.uploadImage(screenshot);
 
 			ArrayList<RecruitTag> result = OcrUtil.ocrRecruitment(url);
 			if (result == null || result.isEmpty()) {
