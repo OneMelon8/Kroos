@@ -74,8 +74,13 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 				// Grab image from URL
 				BufferedImage screenshot = ImageTools.getImageFromUrl(url);
 				// Crop it
-				screenshot = ImageTools.crop(screenshot, (int) (screenshot.getWidth() * 0.8),
-						(int) (screenshot.getHeight() * 0.85));
+				screenshot = ImageTools.crop(screenshot, 1000, 500);
+				try {
+					ImageTools.imageToFile(screenshot);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				// Upload to ImgBB
 				url = ImgbbSpider.uploadImage(screenshot);
 				// Try OCR again
