@@ -67,36 +67,34 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 				continue;
 			}
 
-			// Intercept image if it's large
-			BufferedImage screenshot = ImageTools.getImageFromUrl(url);
-			while (screenshot.getWidth() > 1000 & screenshot.getHeight() > 500)
-				screenshot = ImageTools.crop(screenshot, 1000, 500);
-			// Upload to ImgBB
-			url = ImgbbSpider.uploadImage(screenshot);
+			ArrayList<RecruitTag> result;
+			try {
+				result = OcrUtil.ocrRecruitment(url);
+			} catch (Exception e) {
+				// Grab image from URL
+				BufferedImage screenshot = ImageTools.getImageFromUrl(url);
+				// Crop it
+				screenshot = ImageTools.crop(screenshot, (int) (screenshot.getWidth() * 0.8),
+						(int) (screenshot.getHeight() * 0.85));
+				// Upload to ImgBB
+				url = ImgbbSpider.uploadImage(screenshot);
+				// Try OCR again
+				result = OcrUtil.ocrRecruitment(url);
+			}
 
-			ArrayList<RecruitTag> result = OcrUtil.ocrRecruitment(url);
 			if (result == null || result.isEmpty()) {
 				bot.sendMessage("I don't see any tags in image #" + (a + 1) + "..?", channel);
 				continue;
 			}
 
-			// Upload tag data into database
 			StringBuilder sb = new StringBuilder();
-			for (RecruitTag tag : result) {
-				// Upload data for each tag
-				SqlSpider.update("UPDATE ArknightsRecruit SET count=count+1 WHERE `index`=" + tag.getIndex());
-				LogUtil.info("Updated " + tag.getDisplayName() + " in the database!");
-
+			for (RecruitTag tag : result)
 				// Build string
 				sb.append("**" + tag.getDisplayName() + "**, ");
-			}
 			sb.delete(sb.length() - 2, sb.length());
 
-			// Upload data for bulk tags
-			SqlSpider.execute("INSERT INTO RecruitData(`data`) VALUES (\"" + sb.toString().replace("*", "") + "\")");
-			LogUtil.info("Updated bulk recruit tags in the database!");
-			Message reactMessage = bot
-					.sendMessage("Database updated for image #" + (a + 1) + " with " + sb.toString() + "!", channel);
+			Message reactMessage = bot.sendMessage("Tags detected in image #" + (a + 1) + ": " + sb.toString() + "!",
+					channel);
 			bot.reactDetails(reactMessage); // react with magnifying glass => see more details
 			ReactionDispatcher.register(reactMessage, this, Emojis.MAGNIYFING_GLASS);
 
@@ -105,7 +103,6 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 				continue;
 			bot.sendMessage(emb, channel);
 		}
-		SqlSpider.close();
 	}
 
 	private static MessageEmbed getRecruitResultEmbeded(ArrayList<RecruitTag> tags, int index, boolean isAutoMessage) {
