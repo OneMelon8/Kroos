@@ -63,7 +63,7 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 				return;
 			}
 		}
-		// cooldown.put(authorId, System.currentTimeMillis());
+		cooldown.put(authorId, System.currentTimeMillis());
 
 		bot.sendThinkingPacket(channel);
 		Random r = new Random();
@@ -77,7 +77,6 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 		GachaMember gm = new GachaMember(m);
 		if (!isInventoryFull(authorId)) {
 			bot.sendMessage(gm.generateEmbedded(), channel);
-			bot.sendMessage("Card added to inventory", channel);
 			addToInventory(authorId, gm.getMember().getUser().getId(), -1);
 			return;
 		}
