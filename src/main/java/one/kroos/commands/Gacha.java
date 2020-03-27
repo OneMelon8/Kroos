@@ -73,6 +73,7 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 		// Update database
 		SqlSpider.update("INSERT INTO GachaInventory (id,rolls) VALUES (\"" + authorId + "\",\"" + 1
 				+ "\") ON DUPLICATE KEY UPDATE rolls=rolls+1");
+		SqlSpider.close();
 
 		GachaMember gm = new GachaMember(m);
 		if (!isInventoryFull(authorId)) {
@@ -86,9 +87,9 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 		bot.sendMessage(getInventoryEmbedded(guild.getMember(author)), channel);
 		Message reactMessage = bot.sendMessage(gm.generateEmbedded(), channel);
 		bot.addReactions(reactMessage, Emojis.NUMBER_1, Emojis.NUMBER_2, Emojis.NUMBER_3, Emojis.NUMBER_4,
-				Emojis.NUMBER_5);
+				Emojis.NUMBER_5, Emojis.RECYCLE);
 		ReactionDispatcher.register(reactMessage, this, Emojis.NUMBER_1, Emojis.NUMBER_2, Emojis.NUMBER_3,
-				Emojis.NUMBER_4, Emojis.NUMBER_5);
+				Emojis.NUMBER_4, Emojis.NUMBER_5, Emojis.RECYCLE);
 	}
 
 	@Override
@@ -109,6 +110,10 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 			replaceSlot = 4;
 		else if (emote.getEmoji().equals(Emojis.NUMBER_5))
 			replaceSlot = 5;
+		else {
+			bot.reactCheck(message);
+			return;
+		}
 
 		if (addToInventory(user.getId(), gachaMemberId, replaceSlot))
 			bot.reactCheck(message);
@@ -121,6 +126,7 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 			replaceIndex = getInvItemCount(userId) + 1;
 		SqlSpider.update("INSERT INTO GachaInventory (id,inv1) VALUES (\"" + userId + "\",\"" + gachaId
 				+ "\") ON DUPLICATE KEY UPDATE inv" + replaceIndex + "=\"" + gachaId + "\"");
+		SqlSpider.close();
 		return true;
 	}
 
@@ -139,6 +145,8 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 					count++;
 		} catch (SQLException e) {
 			return 0;
+		} finally {
+			SqlSpider.close();
 		}
 		return count;
 	}
@@ -159,6 +167,7 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 			LogUtil.error("SQL exception caught while getting user inventory:");
 			e.printStackTrace();
 		}
+		SqlSpider.close();
 
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setColor(BotConfig.COLOR_MISC);

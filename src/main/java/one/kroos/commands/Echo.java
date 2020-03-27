@@ -19,7 +19,6 @@ public class Echo extends CommandHandler {
 			Guild guild) {
 		LogUtil.debug("Echoed by " + author.getAsTag() + ": " + message.getContentRaw());
 		bot.reactCheck(message);
-		bot.sendMessage(message.getContentRaw(), channel);
 	}
 
 }
