@@ -19,6 +19,7 @@ public class GachaAssets {
 	public static final String FRAME_4 = "Silver4Frame.png";
 	public static final String FRAME_5 = "GoldFrame.png";
 	public static final String FRAME_6 = "RainbowFrame.png";
+	public static final String FRAME_UNKNOWN = "UnknownFrame.png";
 
 	public static BufferedImage getImage(String name) {
 		try {

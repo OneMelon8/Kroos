@@ -23,7 +23,6 @@ import one.kroos.database.Emojis;
 import one.kroos.database.ImgbbSpider;
 import one.kroos.database.RecruitDatabase;
 import one.kroos.database.RecruitTag;
-import one.kroos.database.SqlSpider;
 import one.kroos.utils.CombinationUtil;
 import one.kroos.utils.GeneralTools;
 import one.kroos.utils.ImageHistogram;
@@ -49,7 +48,7 @@ public class DataCommand extends CommandHandler implements ReactionHandler {
 		bot.sendThinkingPacket(channel);
 		List<Attachment> attachments = message.getAttachments();
 		if (attachments.isEmpty() || !attachments.get(0).isImage()) {
-			bot.sendMessage(getHelpEmbeded(), channel);
+			bot.sendMessage(getHelpEmbedded(), channel);
 			return;
 		}
 

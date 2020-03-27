@@ -82,7 +82,7 @@ public abstract class CommandHandler {
 	 * 
 	 * @return help {@link MessageEmbed} message
 	 */
-	public final MessageEmbed getHelpEmbeded() {
+	public final MessageEmbed getHelpEmbedded() {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setColor(BotConfig.COLOR_MISC);
 		builder.setAuthor("Help for command \"" + this.command + "\":");

@@ -6,6 +6,8 @@ public class BotConfig {
 	public static final String BOT_ID = "677380717008781322";
 	public static final String ONE_ID = "233735408737976320";
 
+	public static final String SERVER_MOE_GLOBAL_ID = "423512363765989378";
+
 	/*
 	 * Reaction time-out time in ms
 	 */

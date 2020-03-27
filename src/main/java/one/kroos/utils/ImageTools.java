@@ -10,6 +10,8 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import one.kroos.database.gacha.GachaAssets;
+
 public class ImageTools {
 
 	public static File imageToFile(BufferedImage img) throws IOException {
@@ -54,5 +56,17 @@ public class ImageTools {
 		g2d.dispose();
 
 		return dimg;
+	}
+
+	public static BufferedImage mergeInventory(BufferedImage[] images) {
+		BufferedImage unknownFrame = GachaAssets.getImage(GachaAssets.FRAME_UNKNOWN);
+		BufferedImage output = new BufferedImage(128 * 5, 128, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = output.createGraphics();
+		for (int a = 0; a < 5; a++)
+			g2d.drawImage(images[a] == null ? unknownFrame : images[a], 128 * a, 0, null);
+		g2d.dispose();
+
+		return output;
 	}
 }

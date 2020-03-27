@@ -54,6 +54,7 @@ public class GachaMember {
 		sb.append("\nAffix: **" + this.affix.getDisplayName() + "**");
 		builder.addField(new Field("**Information:**", sb.toString(), false));
 
+		builder.setFooter(this.member.getId());
 		return builder.build();
 	}
 
@@ -78,7 +79,7 @@ public class GachaMember {
 		return 6;
 	}
 
-	private String getRarityEmoteStr() {
+	public String getRarityEmoteStr() {
 		StringBuilder sb = new StringBuilder();
 		if (this.rarity >= 4)
 			for (int a = 0; a < this.rarity; a++)
@@ -125,6 +126,22 @@ public class GachaMember {
 	public void debug() {
 		System.out.println(this.member.getEffectiveName() + " [R" + this.rarity + "]: \n- Class: "
 				+ this.clazz.toString() + "\n- Affix: " + this.affix.getDisplayName());
+	}
+
+	public Member getMember() {
+		return member;
+	}
+
+	public int getRarity() {
+		return rarity;
+	}
+
+	public GachaClass getClazz() {
+		return clazz;
+	}
+
+	public RecruitTag getAffix() {
+		return affix;
 	}
 
 }

@@ -46,7 +46,7 @@ public class Help extends CommandHandler {
 					+ BotConfig.PREFIX + "help**", channel);
 			return;
 		}
-		bot.sendMessage(commandHandler.getHelpEmbeded(), channel);
+		bot.sendMessage(commandHandler.getHelpEmbedded(), channel);
 	}
 
 	public MessageEmbed getAllHelpEmbeded() {
