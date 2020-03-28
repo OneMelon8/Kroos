@@ -179,14 +179,8 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 		for (int a = 0; a < inventory.size(); a++) {
 			GachaMember m = new GachaMember(
 					bot.getJDA().getGuildById(BotConfig.SERVER_MOE_GLOBAL_ID).getMemberById(inventory.get(a)));
-
-			StringBuilder sb = new StringBuilder();
-			sb.append("Rarity: " + m.getRarityEmoteStr());
-			sb.append("\nClass: **" + m.getClazz().getEmote() + " " + m.getClazz().getDisplayName() + "**");
-			sb.append("\nAffix: **" + m.getAffix().getDisplayName() + "**");
-
-			builder.addField("**Slot #" + (a + 1) + " -- " + m.getMember().getEffectiveName() + "**", sb.toString(),
-					false);
+			builder.addField("**Slot #" + (a + 1) + " -- " + m.getMember().getEffectiveName() + "**",
+					m.getEmbeddedString(), false);
 			pfps[a] = m.generateIcon();
 		}
 

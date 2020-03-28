@@ -52,17 +52,20 @@ public class GachaMember {
 		}
 		builder.setAuthor(this.member.getEffectiveName());
 		builder.setThumbnail(ImgbbSpider.uploadImage(this.generateIcon()));
+		builder.addField(new Field("**Information:**", this.getEmbeddedString(), false));
 
+		builder.setFooter(this.member.getId());
+		return builder.build();
+	}
+
+	public String getEmbeddedString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Rarity: " + this.getRarityEmoteStr());
 		sb.append("\nClass: **" + this.clazz.getEmote() + " " + this.clazz.getDisplayName() + "**");
 		sb.append("\nAffix: **" + this.affix.getDisplayName() + "**");
 		if (this.traits.size() > 0)
 			sb.append("\nTrait: **" + this.traits.get(0).getDisplayName() + "**");
-		builder.addField(new Field("**Information:**", sb.toString(), false));
-
-		builder.setFooter(this.member.getId());
-		return builder.build();
+		return sb.toString();
 	}
 
 	private int randomRarity(Random r) {
