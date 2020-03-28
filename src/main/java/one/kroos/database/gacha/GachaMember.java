@@ -3,6 +3,7 @@ package one.kroos.database.gacha;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,6 +24,7 @@ public class GachaMember {
 	private int rarity;
 	private GachaClass clazz;
 	private RecruitTag affix;
+	private ArrayList<GachaTrait> traits;
 
 	/**
 	 * Generate card based on member
@@ -32,9 +34,12 @@ public class GachaMember {
 
 		// Generate
 		Random r = new Random(m.getIdLong());
-		this.rarity = this.randomRarity(r);
 		this.clazz = GachaClass.values()[r.nextInt(GachaClass.size())]; // class
+		this.rarity = this.randomRarity(r); // rarity
 		this.affix = RecruitTag.getAffixTags().get(r.nextInt(RecruitTag.getAffixTags().size())); // affix
+		this.traits = new ArrayList<GachaTrait>();
+		for (int a = 0; a < r.nextInt(2); a++) // 0-1 traits
+			this.traits.add(GachaTrait.getRandomTrait(r, this.getClazz()));
 	}
 
 	public MessageEmbed generateEmbedded() {
@@ -52,6 +57,8 @@ public class GachaMember {
 		sb.append("Rarity: " + this.getRarityEmoteStr());
 		sb.append("\nClass: **" + this.clazz.getEmote() + " " + this.clazz.getDisplayName() + "**");
 		sb.append("\nAffix: **" + this.affix.getDisplayName() + "**");
+		if (this.traits.size() > 0)
+			sb.append("\nTrait: **" + this.traits.get(0).getDisplayName() + "**");
 		builder.addField(new Field("**Information:**", sb.toString(), false));
 
 		builder.setFooter(this.member.getId());
@@ -123,11 +130,6 @@ public class GachaMember {
 		return icon;
 	}
 
-	public void debug() {
-		System.out.println(this.member.getEffectiveName() + " [R" + this.rarity + "]: \n- Class: "
-				+ this.clazz.toString() + "\n- Affix: " + this.affix.getDisplayName());
-	}
-
 	public Member getMember() {
 		return member;
 	}
@@ -142,6 +144,10 @@ public class GachaMember {
 
 	public RecruitTag getAffix() {
 		return affix;
+	}
+
+	public ArrayList<GachaTrait> getTraits() {
+		return traits;
 	}
 
 }
