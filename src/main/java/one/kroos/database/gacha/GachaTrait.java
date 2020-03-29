@@ -78,8 +78,9 @@ public enum GachaTrait {
 			pool = POOL_SPECIALIST;
 			break;
 		}
-		pool = ArrayUtils.addAll(pool, POOL_UNIVERSAL);
-		return pool[r.nextInt(pool.length)];
+		// pool = ArrayUtils.addAll(pool, POOL_UNIVERSAL);
+		GachaTrait output = pool[r.nextInt(pool.length)];
+		return output;
 	}
 
 	public String getDisplayName() {

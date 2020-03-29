@@ -38,7 +38,7 @@ public class GachaMember {
 		this.rarity = this.randomRarity(r); // rarity
 		this.affix = RecruitTag.getAffixTags().get(r.nextInt(RecruitTag.getAffixTags().size())); // affix
 		this.traits = new ArrayList<GachaTrait>();
-		for (int a = 0; a < r.nextInt(2); a++) // 0-1 traits
+		if (r.nextInt(4) == 0) // 1/4 chance to get traits
 			this.traits.add(GachaTrait.getRandomTrait(r, this.getClazz()));
 	}
 
