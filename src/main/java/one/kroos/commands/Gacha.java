@@ -45,7 +45,7 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 			if (args[0].equalsIgnoreCase("echo")) {
 				// Check self member
 				GachaMember m = new GachaMember(guild.getMember(author));
-				bot.sendMessage(m.generateEmbedded(), channel);
+				bot.sendMessage(m.generateEmbedded(null), channel);
 				return;
 			} else if (args[0].equalsIgnoreCase("inv")) {
 				// Check inventory
@@ -77,15 +77,15 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 
 		GachaMember gm = new GachaMember(m);
 		if (!isInventoryFull(authorId)) {
-			bot.sendMessage(gm.generateEmbedded(), channel);
+			bot.sendMessage(gm.generateEmbedded(null), channel);
 			addToInventory(authorId, gm.getMember().getUser().getId(), -1);
 			return;
 		}
 
 		// Inventory full!
 		bot.sendMessage("Your inventory is full! Choose which slot you would like to override:", channel);
-		bot.sendMessage(getInventoryEmbedded(guild.getMember(author)), channel);
-		Message reactMessage = bot.sendMessage(gm.generateEmbedded(), channel);
+		Message toDelete = bot.sendMessage(getInventoryEmbedded(guild.getMember(author)), channel);
+		Message reactMessage = bot.sendMessage(gm.generateEmbedded(toDelete.getId()), channel);
 		bot.addReactions(reactMessage, Emojis.NUMBER_1, Emojis.NUMBER_2, Emojis.NUMBER_3, Emojis.NUMBER_4,
 				Emojis.NUMBER_5, Emojis.RECYCLE);
 		ReactionDispatcher.register(reactMessage, this, Emojis.NUMBER_1, Emojis.NUMBER_2, Emojis.NUMBER_3,
@@ -98,7 +98,11 @@ public class Gacha extends CommandHandler implements ReactionHandler {
 			return;
 		bot.removeAllReactions(message);
 
-		String gachaMemberId = message.getEmbeds().get(0).getFooter().getText();
+		String[] info = message.getEmbeds().get(0).getFooter().getText().split(" : ");
+		String deleteId = info[0];
+		bot.deleteMessage(channel.retrieveMessageById(deleteId).complete());
+
+		String gachaMemberId = info[1];
 		int replaceSlot = 0;
 		if (emote.getEmoji().equals(Emojis.NUMBER_1))
 			replaceSlot = 1;

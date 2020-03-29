@@ -42,7 +42,7 @@ public class GachaMember {
 			this.traits.add(GachaTrait.getRandomTrait(r, this.getClazz()));
 	}
 
-	public MessageEmbed generateEmbedded() {
+	public MessageEmbed generateEmbedded(String extras) {
 		EmbedBuilder builder = new EmbedBuilder();
 		try {
 			builder.setColor(
@@ -53,8 +53,7 @@ public class GachaMember {
 		builder.setAuthor(this.member.getEffectiveName());
 		builder.setThumbnail(ImgbbSpider.uploadImage(this.generateIcon()));
 		builder.addField(new Field("**Information:**", this.getEmbeddedString(), false));
-
-		builder.setFooter(this.member.getId());
+		builder.setFooter(extras == null ? this.member.getId() : (extras + " : " + this.member.getId()));
 		return builder.build();
 	}
 
